@@ -30,22 +30,30 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+// app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
-/* file storage */
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/assets");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({ storage });
+// CloudinaryConfiguration
+// // const cloudinary = require('cloudinary').v2;
+// cloudinary.config({
+// 	cloud_name: process.env.CLOUDINARY_NAME,
+// 	api_key: process.env.CLOUDINARY_NAME,
+// 	api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
+
+// /* local file storage w/multer */
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "public/assets");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname);
+//   },
+// });
+// const upload = multer({ storage });
 
 /* routes with files */
-app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/auth/register", register);
+app.post("/posts", createPost); //re-add verify token middleware here
 /* routes */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -54,14 +62,14 @@ app.use("/posts", postRoutes);
 /* mongoose setup */
 const PORT = process.env.PORT || 6001;
 mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
-    /* seed data */
-    // User.insertMany(users);
-    // Post.insertMany(posts);
-  })
-  .catch((error) => console.log(`${error} did not connect`));
+	.connect(process.env.MONGO_URL, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => {
+		app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+		/* seed data */
+		// User.insertMany(users);
+		// Post.insertMany(posts);
+	})
+	.catch((error) => console.log(`${error} did not connect`));
