@@ -17,10 +17,15 @@ import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
+import { v2 as cloudinary } from "cloudinary";
+import uploadImage from "./middleware/cloudinary.js";
 
-/* Configutrations */
+/* Configurations */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+/* cloudinary */
+
+/////////////////
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -33,19 +38,34 @@ app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* file storage */
+
+// Todo! update the new Cloudinary middleware and attemp image upload
+// Return "https" URLs by setting secure: true
+
+cloudinary.config({
+	secure: true,
+});
+
+// Log the configuration
+console.log(cloudinary.config(), "cloudinary configuration in index.js");
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/assets");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+	destination: function (req, file, cb) {
+		cb(null, "public/assets");
+	},
+	filename: function (req, file, cb) {
+		const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+		cb(null, file.fieldname + "-" + uniqueSuffix + ".jpg"); // Rename files if needed
+	},
 });
 const upload = multer({ storage });
 
 /* routes with files */
 app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
+
+// app.post("/auth/register", register); // removed callback here and added to auth register route
+// app.post("/posts", verifyToken, createPost); //removed callback here not added to create post route yet
 /* routes */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -54,14 +74,14 @@ app.use("/posts", postRoutes);
 /* mongoose setup */
 const PORT = process.env.PORT || 6001;
 mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
-    /* seed data */
-    // User.insertMany(users);
-    // Post.insertMany(posts);
-  })
-  .catch((error) => console.log(`${error} did not connect`));
+	.connect(process.env.MONGO_URL, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => {
+		app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+		/* seed data */
+		// User.insertMany(users);
+		// Post.insertMany(posts);
+	})
+	.catch((error) => console.log(`${error} did not connect`));
