@@ -19,6 +19,7 @@ import Post from "./models/Post.js";
 import { users, posts } from "./data/index.js";
 import { v2 as cloudinary } from "cloudinary";
 import uploadImage from "./middleware/cloudinary.js";
+// import upload from "./middleware/multer-cloudinary.js";
 
 /* Configurations */
 const __filename = fileURLToPath(import.meta.url);
@@ -42,29 +43,34 @@ app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 // Todo! update the new Cloudinary middleware and attemp image upload
 // Return "https" URLs by setting secure: true
 
-cloudinary.config({
-	secure: true,
-});
+// cloudinary.config({
+// 	secure: true,
+// });
 
-// Log the configuration
-console.log(cloudinary.config(), "cloudinary configuration in index.js");
+// // Log the configuration
+// console.log(cloudinary.config(), "cloudinary configuration in index.js");
 
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		cb(null, "public/assets");
-	},
-	filename: function (req, file, cb) {
-		const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-		cb(null, file.fieldname + "-" + uniqueSuffix + ".jpg"); // Rename files if needed
-	},
-});
-const upload = multer({ storage });
+// const storage = multer.diskStorage({
+// 	destination: function (req, file, cb) {
+// 		cb(null, "public/test");
+// 	},
+// 	filename: function (req, file, cb) {
+// 		cb(null, file.originalname);
+// 		console.log(file, "filename log");
+// 	},
+// });
+// const upload = multer({ storage });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+console.log(upload, "upload log");
 
 /* routes with files */
 app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+// app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 // app.post("/auth/register", register); // removed callback here and added to auth register route
+
 // app.post("/posts", verifyToken, createPost); //removed callback here not added to create post route yet
 /* routes */
 app.use("/auth", authRoutes);
