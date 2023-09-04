@@ -18,7 +18,6 @@ export const register = async (req, res) => {
 		} = req.body;
 
 		const picturePath = req.file.buffer; //changed from req.file.path for disk storage
-		console.log(picturePath, "req clg from line 22");
 
 		// console.log(picturePath, "picture path");
 		const salt = await bcrypt.genSalt();
@@ -44,7 +43,7 @@ export const register = async (req, res) => {
 		res.status(201).json(savedUser);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
-		console.error(err.message, "error message");
+		console.error(err.message, "error message line 47");
 	}
 };
 
@@ -62,6 +61,6 @@ export const login = async (req, res) => {
 		delete user.password;
 		res.status(200).json({ token, user });
 	} catch (err) {
-		res.status(500).json({ error: err.message });
+		res.status(500).json({ error: err.message }, "login error, auth line 65");
 	}
 };

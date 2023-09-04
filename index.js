@@ -36,7 +36,7 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+// app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 /* file storage */
 
@@ -67,7 +67,7 @@ console.log(upload, "upload log");
 
 /* routes with files */
 app.post("/auth/register", upload.single("picture"), register);
-// app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 // app.post("/auth/register", register); // removed callback here and added to auth register route
 
