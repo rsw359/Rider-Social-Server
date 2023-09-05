@@ -11,4 +11,6 @@ router.get("/:userId/posts", verifyToken, getUserPosts);
 /*update */
 router.patch("/:id/like", verifyToken, likePost);
 
+/*delete */
+router.delete("/:id", verifyToken, deletePost);
 export default router;
