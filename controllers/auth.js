@@ -14,6 +14,8 @@ export const register = async (req, res) => {
 			password,
 			friends,
 			location,
+			bike,
+			strava,
 			occupation,
 		} = req.body;
 
@@ -34,9 +36,9 @@ export const register = async (req, res) => {
 			picturePath: pictureUrl,
 			friends,
 			location,
+			bike,
+			strava,
 			occupation,
-			viewedProfile: Math.floor(Math.random() * 10000),
-			impressions: Math.floor(Math.random() * 10000),
 		});
 
 		const savedUser = await newUser.save();
