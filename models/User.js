@@ -35,8 +35,8 @@ const UserSchema = mongoose.Schema(
 		},
 		location: String,
 		occupation: String,
-		viewedProfile: Number,
-		impressions: Number,
+		bike: String,
+		strava: String,
 	},
 	{ timestamps: true }
 );
